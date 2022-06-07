@@ -1,12 +1,41 @@
 let ingresarDinero = 0
 let billeteraVirtual = 0
-let fernet = 600
-let coca = 300
-let sprite = 300
-let gancia = 500
+let fernet = Number(600);
+let coca = Number(300);
+let sprite = Number(300);
+let gancia = Number(500);
 let opciones
 let selecOpcion = 0
+let tipoTarjeta = 0
 
+const medioDePAgo = () => {
+    for (let i = 0; i < 1; i++) {
+        tipoTarjeta = Number(prompt(`Seleccione el medio de pago a utilizar:
+        1- Tarjeta de Debito
+        2- Tarjeta de Credito
+        3- Volver a pagina Anterior`));
+
+        switch (tipoTarjeta) {
+            case 1:
+                alert("Seleccionaste el medio de pago tarjeta de Debito.");
+                recargarSaldo();
+                break;
+            case 2:
+                alert("Seleccionaste el medio de pago tarjeta de Credito.");
+                recargarSaldo();
+                break;
+            case 3:
+                alert("Volviendo a pagina anterior")
+                break;
+            default:
+                alert("Por favor ingrese un dato de los anteriormente esablecidos")
+                i--
+        }
+    }
+
+}
+
+// Funcion para ver si alcanza el saldo para comprar productos
 const verSiAlcanzaSaldo = (dinero, producto) => {
     if (dinero >= producto) {
         dinero = dinero - producto;
@@ -17,6 +46,7 @@ const verSiAlcanzaSaldo = (dinero, producto) => {
     }
 }
 
+// Funcion para recargar saldo
 const recargarSaldo = () => {
     do {
         ingresarDinero = Number(prompt("Ingrese su dinero: "))
@@ -30,12 +60,14 @@ const recargarSaldo = () => {
     billeteraVirtual = billeteraVirtual + ingresarDinero;
 }
 
+// Funcion para ver productos.
 const productos = () => {
     opciones = Number(prompt(`
     1- Fernert $600
     2- Coca $300
     3- Sprite $300
     4- Gancia $500
+    5- Volver a Atras
     `))
     switch (opciones) {
         case 1:
@@ -58,6 +90,11 @@ const productos = () => {
                 billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, gancia);
                 break;
             }
+        case 5:
+            {
+                alert("Volviendo a Pagina Anterior")
+                break;
+            }
         default:
             {
                 alert("Por favor selecione un numero de los establecidos");
@@ -69,11 +106,11 @@ const productos = () => {
 
 
 do {
-    selecOpcion = Number(prompt `¡Bienvenido a la tienda online de bebidas!
+    selecOpcion = Number(prompt(`¡Bienvenido a la tienda online de bebidas!
 Su Dinero Actual es: ${billeteraVirtual}
     -1 Ir a productos
     -2 Recargar Saldo
-    -3 Salir`)
+    -3 Salir`))
 
 
     switch (selecOpcion) {
@@ -84,7 +121,7 @@ Su Dinero Actual es: ${billeteraVirtual}
             }
         case 2:
             {
-                recargarSaldo();
+                medioDePAgo();
                 break;
             }
         case 3:
@@ -99,8 +136,6 @@ Su Dinero Actual es: ${billeteraVirtual}
                 alert("Por favor selecione un numero de los establecidos")
                 break
             }
-
-
     }
 }
 
