@@ -1,12 +1,82 @@
 let ingresarDinero = 0
 let billeteraVirtual = 0
-let fernet = Number(600);
-let coca = Number(300);
-let sprite = Number(300);
-let gancia = Number(500);
 let opciones
 let selecOpcion = 0
 let tipoTarjeta = 0
+const changuito = []
+
+
+//Clase para crear objetos
+class Producto {
+    constructor(tipo, id, nombre, precio) {
+        this.tipo = tipo;
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+    sumaIva() {
+        this.precio = Math.round(this.precio * 1.21);
+    }
+}
+
+class ProductosEnCanasta {
+    constructor(tipo, id, nombre, precio, cantidad) {
+        this.tipo = tipo;
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+        this.cantidad = 1;
+    }
+    cambiarCantidad(accion) {
+        switch (accion) {
+            case `sumar`:
+                this.cantidad += 1;
+                break;
+            case `restar`:
+                this.cantidad -= 1;
+                break;
+        }
+    }
+}
+
+// Array de Objetos
+let productosSinAlcohol = [
+    new Producto("SA", 1, "Sprite 2,25 Lts", 300),
+    new Producto("SA", 2, "Coca 2,25 Lts", 350)
+];
+
+// Array de Objetos
+let productosConAlcohol = [
+    new Producto("CA", 1, "Fernet 750cc", 915),
+    new Producto("CA", 2, "Gancia 950ml", 495)
+];
+
+// Array para Sumar unir los arrays
+let misProductos = [];
+
+misProductos = productosSinAlcohol.concat(productosConAlcohol);
+
+// for Of para aplicar la suma de iva.
+for (const productos of misProductos) {
+    productos.sumaIva();
+}
+
+console.log(misProductos);
+
+const clickSobreProducto = () => {
+    let consutlarTipo = prompt(` Los tipos son: 
+                                - SA de Sin Alcohol.
+                                - CA  de Con Alcohol. 
+                                Escribe tipo de Producto por favor: `);
+    consutlarTipo = consutlarTipo.toUpperCase();
+    let consultarId = Number(prompt(`Ingrese ID: `));
+    const productoABuscar = misProductos.findIndex(elemen => elemen.tipo === consutlarTipo && elemen.id === consultarId);
+    console.log(productoABuscar);
+    // const productoAAgregar = misProductos.find(elemen => elemen.tipo === consutlarTipo && elemen.id === consultarId)
+    // let productoABuscar = misProductos.indexOf(productoAAgregar);
+    changuito.push(new ProductosEnCanasta(misProductos[productoABuscar].tipo, misProductos[productoABuscar].id, misProductos[productoABuscar].nombre, misProductos[productoABuscar].precio))
+}
+
 
 const medioDePAgo = () => {
     for (let i = 0; i < 1; i++) {
@@ -36,9 +106,10 @@ const medioDePAgo = () => {
 }
 
 // Funcion para ver si alcanza el saldo para comprar productos
-const verSiAlcanzaSaldo = (dinero, producto) => {
+const verSiAlcanzaSaldo = (dinero, producto, nombreProducto) => {
     if (dinero >= producto) {
         dinero = dinero - producto;
+        alert(`¡Usted Compro el producto seleccionado!`)
         return (dinero);
     } else {
         alert("Su dinero no alcanza para la compra");
@@ -63,34 +134,46 @@ const recargarSaldo = () => {
 // Funcion para ver productos.
 const productos = () => {
     opciones = Number(prompt(`
-    1- Fernert $600
-    2- Coca $300
-    3- Sprite $300
-    4- Gancia $500
-    5- Volver a Atras
+    1- ${misProductos[0].nombre} a $${misProductos[0].precio}
+    2- ${misProductos[1].nombre} a $${misProductos[1].precio}
+    3- ${misProductos[2].nombre} a $${misProductos[2].precio}
+    4- ${misProductos[3].nombre} a $${misProductos[3].precio}
+    5- Simular Filtrar Productos, clickear productos, y  Agregar a Canasta.
+    6- Saber Que hay en Canasta
+    7- Volver a Atras
     `))
     switch (opciones) {
         case 1:
             {
-                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, fernet);
+                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, misProductos[0].precio);
                 break;
             }
         case 2:
             {
-                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, coca);
+                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, misProductos[1].precio);
                 break;
             }
         case 3:
             {
-                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, sprite);
+                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, misProductos[2].precio);
                 break;
             }
         case 4:
             {
-                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, gancia);
+                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, misProductos[3].precio);
                 break;
             }
         case 5:
+            {
+                clickSobreProducto();
+                break;
+            }
+        case 6:
+            {
+                console.log(changuito);
+                break;
+            }
+        case 7:
             {
                 alert("Volviendo a Pagina Anterior")
                 break;
