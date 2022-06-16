@@ -6,25 +6,26 @@ let tipoTarjeta = 0
 const changuito = []
 
 
-//Clase para crear objetos
+//Clase para crear Productos
 class Producto {
-    constructor(tipo, id, nombre, precio) {
-        this.tipo = tipo;
-        this.id = id;
-        this.nombre = nombre;
-        this.precio = precio;
+    constructor(articulo) {
+        this.tipo = articulo.tipo;
+        this.id = articulo.id;
+        this.nombre = articulo.nombre;
+        this.precio = articulo.precio;
     }
     sumaIva() {
         this.precio = Math.round(this.precio * 1.21);
     }
 }
 
+//Clase para crear Changuito
 class ProductosEnCanasta {
-    constructor(tipo, id, nombre, precio, cantidad) {
-        this.tipo = tipo;
-        this.id = id;
-        this.nombre = nombre;
-        this.precio = precio;
+    constructor(articulo) {
+        this.tipo = articulo.tipo;
+        this.id = articulo.id;
+        this.nombre = articulo.nombre;
+        this.precio = articulo.precio;
         this.cantidad = 1;
     }
     cambiarCantidad(accion) {
@@ -33,27 +34,41 @@ class ProductosEnCanasta {
                 this.cantidad += 1;
                 break;
             case `restar`:
-                this.cantidad -= 1;
+                if (this.cantidad > 1) {
+                    this.cantidad -= 1;
+                } else {
+                    const indexProducto = changuito.findIndex(indexElemento => indexElemento.id == this.id);
+                    changuito.splice(indexProducto, 1);
+                }
                 break;
         }
     }
 }
 
+//Funcion para sumar todos los productos del changuito.
+
+const totalChanguito = () => {
+    totalAPagar = changuito.reduce((total, elemento) => total + (elemento.precio * elemento.cantidad), 0);
+    return (totalAPagar);
+}
+
+
 // Array de Objetos
 let productosSinAlcohol = [
-    new Producto("SA", 1, "Sprite 2,25 Lts", 300),
-    new Producto("SA", 2, "Coca 2,25 Lts", 350)
+    new Producto({ tipo: "SA", id: 1, nombre: "Sprite 2,25 Lts", precio: 300 }),
+    new Producto({ tipo: "SA", id: 2, nombre: "Coca 2,25 Lts", precio: 350 })
 ];
 
 // Array de Objetos
 let productosConAlcohol = [
-    new Producto("CA", 1, "Fernet 750cc", 915),
-    new Producto("CA", 2, "Gancia 950ml", 495)
+    new Producto({ tipo: "CA", id: 1, nombre: "Fernet 750cc", precio: 915 }),
+    new Producto({ tipo: "CA", id: 2, nombre: "Gancia 950ml", precio: 495 })
 ];
 
 // Array para Sumar unir los arrays
 let misProductos = [];
 
+// Array Concatenado entre productos con y sin alcohol
 misProductos = productosSinAlcohol.concat(productosConAlcohol);
 
 // for Of para aplicar la suma de iva.
@@ -61,8 +76,7 @@ for (const productos of misProductos) {
     productos.sumaIva();
 }
 
-console.log(misProductos);
-
+// Funcion para simular click en un producto.
 const clickSobreProducto = () => {
     let consutlarTipo = prompt(` Los tipos son: 
                                 - SA de Sin Alcohol.
@@ -71,14 +85,26 @@ const clickSobreProducto = () => {
     consutlarTipo = consutlarTipo.toUpperCase();
     let consultarId = Number(prompt(`Ingrese ID: `));
     const productoABuscar = misProductos.findIndex(elemen => elemen.tipo === consutlarTipo && elemen.id === consultarId);
-    console.log(productoABuscar);
-    // const productoAAgregar = misProductos.find(elemen => elemen.tipo === consutlarTipo && elemen.id === consultarId)
-    // let productoABuscar = misProductos.indexOf(productoAAgregar);
-    changuito.push(new ProductosEnCanasta(misProductos[productoABuscar].tipo, misProductos[productoABuscar].id, misProductos[productoABuscar].nombre, misProductos[productoABuscar].precio))
+    changuito.push(new ProductosEnCanasta(misProductos[productoABuscar]))
+}
+
+// Funcion para recargar saldo
+const recargarSaldo = () => {
+    do {
+        ingresarDinero = Number(prompt("Ingrese su dinero: "))
+        if (ingresarDinero !== Number(ingresarDinero)) {
+            alert("Ingrese unicamente numeros");
+        }
+    }
+
+    while (ingresarDinero !== Number(ingresarDinero))
+
+    billeteraVirtual = billeteraVirtual + ingresarDinero;
 }
 
 
-const medioDePAgo = () => {
+// Funcion para selecionar medio de pago.
+const medioDePago = () => {
     for (let i = 0; i < 1; i++) {
         tipoTarjeta = Number(prompt(`Seleccione el medio de pago a utilizar:
         1- Tarjeta de Debito
@@ -102,11 +128,10 @@ const medioDePAgo = () => {
                 i--
         }
     }
-
 }
 
-// Funcion para ver si alcanza el saldo para comprar productos
-const verSiAlcanzaSaldo = (dinero, producto, nombreProducto) => {
+// Funcion para ver si alcanza el saldo para comprar productos o changuito completo.
+const verSiAlcanzaSaldo = (dinero, producto) => {
     if (dinero >= producto) {
         dinero = dinero - producto;
         alert(`¡Usted Compro el producto seleccionado!`)
@@ -117,19 +142,6 @@ const verSiAlcanzaSaldo = (dinero, producto, nombreProducto) => {
     }
 }
 
-// Funcion para recargar saldo
-const recargarSaldo = () => {
-    do {
-        ingresarDinero = Number(prompt("Ingrese su dinero: "))
-        if (ingresarDinero !== Number(ingresarDinero)) {
-            alert("Ingrese unicamente numeros");
-        }
-    }
-
-    while (ingresarDinero !== Number(ingresarDinero))
-
-    billeteraVirtual = billeteraVirtual + ingresarDinero;
-}
 
 // Funcion para ver productos.
 const productos = () => {
@@ -138,9 +150,7 @@ const productos = () => {
     2- ${misProductos[1].nombre} a $${misProductos[1].precio}
     3- ${misProductos[2].nombre} a $${misProductos[2].precio}
     4- ${misProductos[3].nombre} a $${misProductos[3].precio}
-    5- Simular Filtrar Productos, clickear productos, y  Agregar a Canasta.
-    6- Saber Que hay en Canasta
-    7- Volver a Atras
+    5- Volver a Atras
     `))
     switch (opciones) {
         case 1:
@@ -165,16 +175,6 @@ const productos = () => {
             }
         case 5:
             {
-                clickSobreProducto();
-                break;
-            }
-        case 6:
-            {
-                console.log(changuito);
-                break;
-            }
-        case 7:
-            {
                 alert("Volviendo a Pagina Anterior")
                 break;
             }
@@ -186,14 +186,73 @@ const productos = () => {
     }
 }
 
+// funcion para navegar en el menu de changuito
+const menuChanguito = () => {
+    do {
+        selecOpcion = Number(prompt(`¡Estas en el Menu de Changuito!
+    -1 Simular Filtrar Productos, clickear productos, y  Agregar a Canasta.
+    -2 Saber Que hay en Changuito
+    -3 Sumar 1 a los productos en changuito.
+    -4 Restar 1 a los productos del changuito.
+    -5 Pagar todos los productos del changuito:
+    -6 Volver al Menu Principal.
+ `))
 
+        switch (selecOpcion) {
+            case 1:
+                {
+                    clickSobreProducto();
+                    break;
+                }
+            case 2:
+                {
+                    console.log(changuito);
+                    break;
+                }
 
+            case 3:
+                {
+                    changuito.forEach(sumarProducto => {
+                        sumarProducto.cambiarCantidad(`sumar`);
+                    })
+                    break;
+                }
+            case 4:
+                {
+                    changuito.forEach(restarProductos => {
+                        restarProductos.cambiarCantidad(`restar`);
+                    })
+                    break;
+                }
+            case 5:
+                {
+                    billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, totalChanguito());
+                    break;
+                }
+            case 6:
+                alert(`Volviendo al Menu Principal`)
+                break;
+            default:
+                {
+                    alert("Por favor selecione un numero de los establecidos")
+                    break
+                }
+        }
+    }
+
+    while (selecOpcion != 6);
+
+}
+
+//Menu principal
 do {
     selecOpcion = Number(prompt(`¡Bienvenido a la tienda online de bebidas!
 Su Dinero Actual es: ${billeteraVirtual}
-    -1 Ir a productos
-    -2 Recargar Saldo
-    -3 Salir`))
+    -1 Ver lista de productos por precio, y comprar por unidad.
+    -2 Entrar al Menu de Changuito.
+    -3 Recargar Saldo
+    -4 Salir
+ `))
 
 
     switch (selecOpcion) {
@@ -204,10 +263,15 @@ Su Dinero Actual es: ${billeteraVirtual}
             }
         case 2:
             {
-                medioDePAgo();
+                menuChanguito();
                 break;
             }
         case 3:
+            {
+                medioDePago();
+                break;
+            }
+        case 4:
             {
                 alert(`Muchas gracias por confiar en nosotros, ¡vuelva pronto!
                 Su saldo sobrante es de: ${billeteraVirtual}
@@ -222,4 +286,4 @@ Su Dinero Actual es: ${billeteraVirtual}
     }
 }
 
-while (selecOpcion != 3);
+while (selecOpcion != 4);
