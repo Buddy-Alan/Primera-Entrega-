@@ -99,6 +99,7 @@ verTodo.addEventListener(`click`, () => { verTodoElCatalogo(misProductos) });
 verProduCA.addEventListener(`click`, () => { verTodoElCatalogo(productosConAlcohol) });
 verProduSA.onclick = () => { verTodoElCatalogo(productosSinAlcohol) };
 
+
 // Funcion para ver todo el catalogo.
 const verTodoElCatalogo = (productos) => {
     const listaProductosYaPasados = document.querySelectorAll(`.catalogoProductos`)
@@ -171,7 +172,7 @@ botonParaEliminarProductosDeChanguito = (productoAEliminar) => {
         let index = saberI(changuito, productoAEliminar)
         eliminarUnProducto.onclick = () => {
             changuito[index].cambiarCantidad(`restar`);
-            if (changuito[index].cantidad > 1) {
+            if (changuito[index].cantidad > 0) {
                 cantidadProducto.innerHTML = `Cantidad agregada: ${changuito[index].cantidad} `
             } else {
                 //la idea del else es poder remover los objetos! 
@@ -182,7 +183,6 @@ botonParaEliminarProductosDeChanguito = (productoAEliminar) => {
 }
 
 //Inputs  para nombre y apellido
-
 const nombreInput = document.getElementById(`nombre`);
 const apellidoInput = document.getElementById(`apellido`);
 const respuestaInput = document.getElementById(`respuesta`);
