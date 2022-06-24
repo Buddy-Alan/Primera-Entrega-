@@ -1,8 +1,4 @@
-let ingresarDinero = 0
 let billeteraVirtual = 0
-let opciones
-let selecOpcion = 0
-let tipoTarjeta = 0
 const changuito = []
 
 
@@ -13,6 +9,7 @@ class Producto {
         this.id = articulo.id;
         this.nombre = articulo.nombre;
         this.precio = articulo.precio;
+        this.imagen = articulo.imagen
     }
     sumaIva() {
         this.precio = Math.round(this.precio * 1.21);
@@ -26,6 +23,7 @@ class ProductosEnCanasta {
         this.id = articulo.id;
         this.nombre = articulo.nombre;
         this.precio = articulo.precio;
+        this.imagen = articulo.imagen
         this.cantidad = 1;
     }
     cambiarCantidad(accion) {
@@ -45,6 +43,13 @@ class ProductosEnCanasta {
     }
 }
 
+
+
+var myArray = [{ id: 1, name: 'John' }, { id: 2, name: 'Rick' }, { id: 3, name: 'Anna' }];
+console.log(myArray)
+myArray.splice(0, 2)
+console.log(myArray)
+
 //Funcion para sumar todos los productos del changuito.
 
 const totalChanguito = () => {
@@ -55,14 +60,14 @@ const totalChanguito = () => {
 
 // Array de Objetos
 let productosSinAlcohol = [
-    new Producto({ tipo: "SA", id: 1, nombre: "Sprite 2,25 Lts", precio: 300 }),
-    new Producto({ tipo: "SA", id: 2, nombre: "Coca 2,25 Lts", precio: 350 })
+    new Producto({ tipo: "SA", id: "SA 1", nombre: "Sprite 2,25 Lts", precio: 300, imagen: `./imagenes/Sprite 2,25 Lts.jpg` }),
+    new Producto({ tipo: "SA", id: "SA 2", nombre: "Coca 2,25 Lts", precio: 350, imagen: `./imagenes/Coca 2,25 Lts.jpg` })
 ];
 
 // Array de Objetos
 let productosConAlcohol = [
-    new Producto({ tipo: "CA", id: 1, nombre: "Fernet 750cc", precio: 915 }),
-    new Producto({ tipo: "CA", id: 2, nombre: "Gancia 950ml", precio: 495 })
+    new Producto({ tipo: "CA", id: "CA 1", nombre: "Fernet 750cc", precio: 915, imagen: `./imagenes/Fernet 750cc.jpg` }),
+    new Producto({ tipo: "CA", id: "CA 2", nombre: "Gancia 950ml", precio: 495, imagen: `./imagenes/Gancia 950ml.jpg` })
 ];
 
 // Array para Sumar unir los arrays
@@ -70,220 +75,131 @@ let misProductos = [];
 
 // Array Concatenado entre productos con y sin alcohol
 misProductos = productosSinAlcohol.concat(productosConAlcohol);
-
-// for Of para aplicar la suma de iva.
 for (const productos of misProductos) {
     productos.sumaIva();
 }
 
-// Funcion para simular click en un producto.
-const clickSobreProducto = () => {
-    let consutlarTipo = prompt(` Los tipos son: 
-                                - SA de Sin Alcohol.
-                                - CA  de Con Alcohol. 
-                                Escribe tipo de Producto por favor: `);
-    consutlarTipo = consutlarTipo.toUpperCase();
-    let consultarId = Number(prompt(`Ingrese ID: `));
-    const productoABuscar = misProductos.findIndex(elemen => elemen.tipo === consutlarTipo && elemen.id === consultarId);
-    changuito.push(new ProductosEnCanasta(misProductos[productoABuscar]))
-}
+titulo.innerHTML = ` Bienvenido a nuestra tienda de Bebidas !`
 
-// Funcion para recargar saldo
-const recargarSaldo = () => {
-    do {
-        ingresarDinero = Number(prompt("Ingrese su dinero: "))
-        if (ingresarDinero !== Number(ingresarDinero)) {
-            alert("Ingrese unicamente numeros");
-        }
+
+const catalogoProductos = document.getElementsByClassName(`catalogoProductos`);
+console.log(catalogoProductos);
+
+let productoPrecio = document.querySelectorAll(`.catalogoProductosPrecio`)
+let productoNombre = document.querySelectorAll(`.catalogoProductosTitulo`)
+let productoImagen = document.querySelectorAll(`.catalogoProductosImg`)
+let catalogoDeProductos = document.getElementById(`catalogo`)
+
+// Utilizado para ver los productos con los botones.
+const verTodo = document.getElementById(`verProductos`);
+const verProduSA = document.getElementById(`verProductosSA`);
+const verProduCA = document.getElementById(`verProductosCA`);
+
+verTodo.addEventListener(`click`, () => { verTodoElCatalogo(misProductos) });
+verProduCA.addEventListener(`click`, () => { verTodoElCatalogo(productosConAlcohol) });
+verProduSA.onclick = () => { verTodoElCatalogo(productosSinAlcohol) };
+
+// Funcion para ver todo el catalogo.
+const verTodoElCatalogo = (productos) => {
+    const listaProductosYaPasados = document.querySelectorAll(`.catalogoProductos`)
+    for (const productosAnteriores of listaProductosYaPasados) {
+        productosAnteriores.remove();
     }
-
-    while (ingresarDinero !== Number(ingresarDinero))
-
-    billeteraVirtual = billeteraVirtual + ingresarDinero;
-}
-
-
-// Funcion para selecionar medio de pago.
-const medioDePago = () => {
-    for (let i = 0; i < 1; i++) {
-        tipoTarjeta = Number(prompt(`Seleccione el medio de pago a utilizar:
-        1- Tarjeta de Debito
-        2- Tarjeta de Credito
-        3- Volver a pagina Anterior`));
-
-        switch (tipoTarjeta) {
-            case 1:
-                alert("Seleccionaste el medio de pago tarjeta de Debito.");
-                recargarSaldo();
-                break;
-            case 2:
-                alert("Seleccionaste el medio de pago tarjeta de Credito.");
-                recargarSaldo();
-                break;
-            case 3:
-                alert("Volviendo a pagina anterior")
-                break;
-            default:
-                alert("Por favor ingrese un dato de los anteriormente esablecidos")
-                i--
-        }
+    for (const catalogo of productos) {
+        const etiqueta = document.createElement(`div`);
+        etiqueta.className = `catalogoProductos`
+        etiqueta.innerHTML = `
+    <img src="${catalogo.imagen}" alt="${catalogo.nombre}" height="250" width="250" class="catalogoProductosImg"> 
+    <div class="catalogoProductosDescripcion>
+    <h1 class="catalogoProductosTitulo"> ${catalogo.nombre}</h1>
+    <p class="catalogoProductosPrecio"> $ ${catalogo.precio} </p>
+    </div>
+    <div><button class="btn btn-secondary" id="agregar_${catalogo.id}">Agregar</button> </div>
+    `
+        catalogoDeProductos.append(etiqueta)
+        botonAgregarProductos = document.getElementById(`agregar_${catalogo.id}`)
+        botonAgregarProductos.addEventListener(`click`, (e) => {
+            e.preventDefault();
+            insertarProductosAChanguito(catalogo)
+        })
     }
 }
 
-// Funcion para ver si alcanza el saldo para comprar productos o changuito completo.
-const verSiAlcanzaSaldo = (dinero, producto) => {
-    if (dinero >= producto) {
-        dinero = dinero - producto;
-        alert(`¡Usted Compro el producto seleccionado!`)
-        return (dinero);
+//variables usadas en el changuito.
+let canastaDeCompras = document.getElementById(`canasta`);
+
+//Funcion para saber index de un elemento del array por ID
+saberI = (arrayABuscar, elementoBuscado) => {
+    return (arrayABuscar.findIndex(elemento => elemento.id === elementoBuscado.id))
+}
+
+//Funcion para agregar productos al html
+const agregarProductoAlChanguitoEnHtml = (productoAAgregar) => {
+    const etiquetaChango = document.createElement(`div`);
+    etiquetaChango.classList.add(`productosDelChanguito`);
+    etiquetaChango.id = `${productoAAgregar.id}`;
+    etiquetaChango.innerHTML = `
+<img src="${productoAAgregar.imagen}" alt="${productoAAgregar.nombre}" height="250" width="250" class="changuitoProductoImagen">
+<div class="changuitoDescripcionProducto">
+<h1>Producto: ${productoAAgregar.nombre}</h1>
+<p>Precio por Unidad: ${productoAAgregar.precio}</p>
+<p id="cantidad_${productoAAgregar.id}">Cantidad agregada: 1 </p>
+</div> 
+<div><button id="elminiar_${productoAAgregar.id}">Elminiar</button> </div>`
+    canastaDeCompras.append(etiquetaChango)
+}
+
+//Funcion para agregar productos al changito.
+insertarProductosAChanguito = (producto) => {
+    let index = saberI(changuito, producto)
+    if (index > -1) {
+        changuito[index].cambiarCantidad(`sumar`);
+        cantidad = document.getElementById(`cantidad_${producto.id}`)
+        cantidad.innerHTML = `Cantidad agregada: ${changuito[index].cantidad} `
     } else {
-        alert("Su dinero no alcanza para la compra");
-        return (dinero);
+        changuito.push(new ProductosEnCanasta({ tipo: producto.tipo, id: producto.id, nombre: producto.nombre, precio: producto.precio, imagen: producto.imagen }))
+        agregarProductoAlChanguitoEnHtml(producto);
+        botonParaEliminarProductosDeChanguito(producto);
     }
 }
 
-
-// Funcion para ver productos.
-const productos = () => {
-    opciones = Number(prompt(`
-    1- ${misProductos[0].nombre} a $${misProductos[0].precio}
-    2- ${misProductos[1].nombre} a $${misProductos[1].precio}
-    3- ${misProductos[2].nombre} a $${misProductos[2].precio}
-    4- ${misProductos[3].nombre} a $${misProductos[3].precio}
-    5- Volver a Atras
-    `))
-    switch (opciones) {
-        case 1:
-            {
-                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, misProductos[0].precio);
-                break;
+//Funcion para el boton para eliminar productos.
+botonParaEliminarProductosDeChanguito = (productoAEliminar) => {
+    for (productosEnChango of changuito) {
+        const eliminarUnProducto = document.getElementById(`elminiar_${productoAEliminar.id}`)
+        const cantidadProducto = document.getElementById(`cantidad_${productoAEliminar.id}`)
+        let index = saberI(changuito, productoAEliminar)
+        eliminarUnProducto.onclick = () => {
+            changuito[index].cambiarCantidad(`restar`);
+            if (changuito[index].cantidad > 1) {
+                cantidadProducto.innerHTML = `Cantidad agregada: ${changuito[index].cantidad} `
+            } else {
+                //la idea del else es poder remover los objetos! 
+                const listadoDeProductosActualizado = document.querySelectorAll(`.productosDelChanguito`)
             }
-        case 2:
-            {
-                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, misProductos[1].precio);
-                break;
-            }
-        case 3:
-            {
-                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, misProductos[2].precio);
-                break;
-            }
-        case 4:
-            {
-                billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, misProductos[3].precio);
-                break;
-            }
-        case 5:
-            {
-                alert("Volviendo a Pagina Anterior")
-                break;
-            }
-        default:
-            {
-                alert("Por favor selecione un numero de los establecidos");
-                break;
-            }
-    }
-}
-
-// funcion para navegar en el menu de changuito
-const menuChanguito = () => {
-    do {
-        selecOpcion = Number(prompt(`¡Estas en el Menu de Changuito!
-    -1 Simular Filtrar Productos, clickear productos, y  Agregar a Canasta.
-    -2 Saber Que hay en Changuito
-    -3 Sumar 1 a los productos en changuito.
-    -4 Restar 1 a los productos del changuito.
-    -5 Pagar todos los productos del changuito:
-    -6 Volver al Menu Principal.
- `))
-
-        switch (selecOpcion) {
-            case 1:
-                {
-                    clickSobreProducto();
-                    break;
-                }
-            case 2:
-                {
-                    console.log(changuito);
-                    break;
-                }
-
-            case 3:
-                {
-                    changuito.forEach(sumarProducto => {
-                        sumarProducto.cambiarCantidad(`sumar`);
-                    })
-                    break;
-                }
-            case 4:
-                {
-                    changuito.forEach(restarProductos => {
-                        restarProductos.cambiarCantidad(`restar`);
-                    })
-                    break;
-                }
-            case 5:
-                {
-                    billeteraVirtual = verSiAlcanzaSaldo(billeteraVirtual, totalChanguito());
-                    break;
-                }
-            case 6:
-                alert(`Volviendo al Menu Principal`)
-                break;
-            default:
-                {
-                    alert("Por favor selecione un numero de los establecidos")
-                    break
-                }
         }
     }
-
-    while (selecOpcion != 6);
-
 }
 
-//Menu principal
-do {
-    selecOpcion = Number(prompt(`¡Bienvenido a la tienda online de bebidas!
-Su Dinero Actual es: ${billeteraVirtual}
-    -1 Ver lista de productos por precio, y comprar por unidad.
-    -2 Entrar al Menu de Changuito.
-    -3 Recargar Saldo
-    -4 Salir
- `))
+//Inputs  para nombre y apellido
 
+const nombreInput = document.getElementById(`nombre`);
+const apellidoInput = document.getElementById(`apellido`);
+const respuestaInput = document.getElementById(`respuesta`);
+const formularioInput = document.getElementById(`datosPersonales`);
 
-    switch (selecOpcion) {
-        case 1:
-            {
-                productos();
-                break;
-            }
-        case 2:
-            {
-                menuChanguito();
-                break;
-            }
-        case 3:
-            {
-                medioDePago();
-                break;
-            }
-        case 4:
-            {
-                alert(`Muchas gracias por confiar en nosotros, ¡vuelva pronto!
-                Su saldo sobrante es de: ${billeteraVirtual}
-                `)
-                break;
-            }
-        default:
-            {
-                alert("Por favor selecione un numero de los establecidos")
-                break
-            }
-    }
+formularioInput.onsubmit = (e) => {
+    e.preventDefault();
+    respuestaInput.innerHTML = `Bienvenido ${nombreInput.value} ${apellidoInput.value}`
 }
 
-while (selecOpcion != 4);
+//Inputs  para agregar dinero
+const dineroInput = document.getElementById(`saldo`);
+const formDinero = document.getElementById(`dineroAGastar`);
+const dineroIngresado = document.getElementById(`dineroIngresado`);
+
+formDinero.onsubmit = (e) => {
+    e.preventDefault();
+    billeteraVirtual = dineroInput.value
+    dineroIngresado.innerHTML = `Su Saldo Actual es: $ ${billeteraVirtual}`
+}
